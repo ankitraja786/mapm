@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>OSM with Leaflet</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+    <style>
+        #map {
+            height: 400px;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <h3>Select Source and Destination</h3>
+    <div id="map"></div>
+    <p id="coords"></p>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([28.6139, 77.2090], 12); // Default Delhi
+
+        // Add OSM tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '© OpenStreetMap'
+        }).addTo(map);
+
+        var sourceMarker, destMarker;
+        var clickCount = 0;
+
+        // On map click
+        map.on('click', function(e) {
+            clickCount++;
+            if (clickCount == 1) {
+                if (sourceMarker) map.removeLayer(sourceMarker);
+                sourceMarker = L.marker(e.latlng).addTo(map).bindPopup("Source");
+            } else if (clickCount == 2) {
+                if (destMarker) map.removeLayer(destMarker);
+                destMarker = L.marker(e.latlng).addTo(map).bindPopup("Destination");
+                clickCount = 0; // Reset
+            }
+
+            document.getElementById("coords").innerHTML = 
+                "Lat: " + e.latlng.lat.toFixed(5) + ", Lng: " + e.latlng.lng.toFixed(5);
+        });
+    </script>
+</body>
+</html>
